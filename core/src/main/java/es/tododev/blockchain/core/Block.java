@@ -12,9 +12,8 @@ public class Block implements Serializable {
 	private long proofOfWork;
 	private final byte[] previousHash;
 	
-	public Block(List<Transaction> transactions, long proofOfWork, byte[] previousHash) {
+	public Block(List<Transaction> transactions, byte[] previousHash) {
 		this.transactions = transactions;
-		this.proofOfWork = proofOfWork;
 		this.previousHash = previousHash;
 	}
 	

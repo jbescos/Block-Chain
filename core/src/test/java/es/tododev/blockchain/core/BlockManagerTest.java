@@ -57,8 +57,8 @@ public class BlockManagerTest {
 		manager.add(b1);
 		Block b2 = createBlock(BlockChainUtils.toBytes(b1));
 		manager.add(b2);
-		Block fork = createBlock(BlockChainUtils.toBytes(b1));
-		manager.add(fork);
+		Block fork1 = createBlock(BlockChainUtils.toBytes(b1));
+		manager.add(fork1);
 		Block b3 = createBlock(BlockChainUtils.toBytes(b2));
 		manager.add(b3);
 		Block b4 = createBlock(BlockChainUtils.toBytes(b3));
@@ -91,14 +91,10 @@ public class BlockManagerTest {
 		for (int i = 0; i < TRANSACTIONS; i++) {
 			transactions.add(createTransaction());
 		}
-		long proofOfWork = 0;
-		boolean valid = false;
-		Block block = null;
-		while (!valid) {
-			block = new Block(transactions, proofOfWork, previousHash);
-			valid = validator.isValid(block);
-			proofOfWork++;
-		}
+		Block block = new Block(transactions, previousHash);
+		long proofOfWork = new MinerTask(block).calculateProofOfWork();
+		System.out.println("Proof of work is: " + proofOfWork);
+		block.setProofOfWork(proofOfWork);
 		return block;
 	}
 

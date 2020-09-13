@@ -25,12 +25,7 @@ public class BlockValidatorDefault implements BlockValidator {
 			}
 		}
 		byte[] sha256 = BlockChainUtils.sha256(BlockChainUtils.toBytes(block));
-		return isHashValid(sha256);
-	}
-	
-	private boolean isHashValid(byte[] sha256) {
-		String binary = BlockChainUtils.toBinary(sha256);
-		return binary.startsWith("0000");
+		return BlockChainUtils.isHashValid(sha256);
 	}
 
 }

@@ -55,5 +55,23 @@ public class BlockChainUtils {
 			throw BlockChainException.errorCannotHash(transaction, e);
 		}
 	}
+	
+	public static boolean isHashValid(byte[] sha256) {
+		String binary = BlockChainUtils.toBinary(sha256);
+		boolean valid = binary.startsWith("000000");
+		return valid;
+	}
+	
+	public static boolean test(String base, Long proofOfWork) {
+		String compose = base + proofOfWork;
+		try {
+			MessageDigest md = MessageDigest.getInstance(ALGORITHM);
+			byte[] digest = md.digest(compose.getBytes());
+			byte[] sha256 = BlockChainUtils.sha256(digest);
+			return isHashValid(sha256);
+		} catch (NoSuchAlgorithmException | BlockChainException e) {
+			return false;
+		}
+	}
 
 }
