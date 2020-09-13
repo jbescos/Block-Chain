@@ -1,5 +1,7 @@
 package es.tododev.blockchain.core;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -7,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -22,8 +24,6 @@ public class BlockManagerTest {
 	private static final int USERS = 10;
 	private static final int TRANSACTIONS = 100;
 	private long transactionIndex = 0;
-	private long blockIndex = 0;
-	private byte[] previousHash = new byte[0];
 
 	@BeforeClass
 	public static void beforeClass() throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -36,11 +36,44 @@ public class BlockManagerTest {
 	public void normal() throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
 		BlockChainStorage storage = new BlockChainStorageDefault();
 		BlockManager manager = new BlockManagerImpl(storage, validator);
-		Block block = createBlock();
-		manager.add(block);
-		manager.add(createBlock());
-		manager.add(createBlock());
-		manager.add(createBlock());
+		byte[] previousHash = new byte[0];
+		Block b1 = createBlock(previousHash);
+		manager.add(b1);
+		Block b2 = createBlock(BlockChainUtils.toBytes(b1));
+		manager.add(b2);
+		Block b3 = createBlock(BlockChainUtils.toBytes(b2));
+		manager.add(b3);
+		Block b4 = createBlock(BlockChainUtils.toBytes(b3));
+		manager.add(b4);
+		assertEquals(Arrays.asList(b1, b2, b3, b4), storage.blockChain());
+	}
+	
+	@Test
+	public void multipleBlocks() throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
+		BlockChainStorage storage = new BlockChainStorageDefault();
+		BlockManager manager = new BlockManagerImpl(storage, validator);
+		byte[] previousHash = new byte[0];
+		Block b1 = createBlock(previousHash);
+		manager.add(b1);
+		Block b2 = createBlock(BlockChainUtils.toBytes(b1));
+		manager.add(b2);
+		Block fork = createBlock(BlockChainUtils.toBytes(b1));
+		manager.add(fork);
+		Block b3 = createBlock(BlockChainUtils.toBytes(b2));
+		manager.add(b3);
+		Block b4 = createBlock(BlockChainUtils.toBytes(b3));
+		manager.add(b4);
+		Block b5 = createBlock(BlockChainUtils.toBytes(b4));
+		manager.add(b5);
+		Block b6 = createBlock(BlockChainUtils.toBytes(b5));
+		manager.add(b6);
+		Block b7 = createBlock(BlockChainUtils.toBytes(b6));
+		manager.add(b7);
+		Block b8 = createBlock(BlockChainUtils.toBytes(b7));
+		manager.add(b8);
+		Block b9 = createBlock(BlockChainUtils.toBytes(b8));
+		manager.add(b9);
+		assertEquals(Arrays.asList(b1, b2, b3, b4, b5, b6, b7, b8, b9), storage.blockChain());
 	}
 
 	private Transaction createTransaction() throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, BlockChainException {
@@ -53,7 +86,7 @@ public class BlockManagerTest {
 		return transaction;
 	}
 	
-	private Block createBlock() throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
+	private Block createBlock(byte[] previousHash) throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
 		List<Transaction> transactions = new ArrayList<>(TRANSACTIONS);
 		for (int i = 0; i < TRANSACTIONS; i++) {
 			transactions.add(createTransaction());
@@ -62,15 +95,10 @@ public class BlockManagerTest {
 		boolean valid = false;
 		Block block = null;
 		while (!valid) {
-			block = new Block(blockIndex, transactions, proofOfWork, previousHash);
+			block = new Block(transactions, proofOfWork, previousHash);
 			valid = validator.isValid(block);
 			proofOfWork++;
-			if (valid) {
-				previousHash = BlockChainUtils.toBytes(block);
-				System.out.println("Book " + block.getIndex() + " hash is " + Base64.getEncoder().encodeToString(previousHash));
-			}
 		}
-		blockIndex++;
 		return block;
 	}
 

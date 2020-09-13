@@ -8,21 +8,16 @@ import java.util.List;
 public class Block implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final long index;
 	private final List<Transaction> transactions;
 	private long proofOfWork;
 	private final byte[] previousHash;
 	
-	public Block(long index, List<Transaction> transactions, long proofOfWork, byte[] previousHash) {
-		this.index = index;
+	public Block(List<Transaction> transactions, long proofOfWork, byte[] previousHash) {
 		this.transactions = transactions;
 		this.proofOfWork = proofOfWork;
 		this.previousHash = previousHash;
 	}
 	
-	public long getIndex() {
-		return index;
-	}
 	public long getProofOfWork() {
 		return proofOfWork;
 	}
@@ -38,7 +33,7 @@ public class Block implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Block [index=" + index + ", transactions=" + transactions.size() + ", proofOfWork=" + proofOfWork
+		return "Block [transactions=" + transactions.size() + ", proofOfWork=" + proofOfWork
 				+ ", previousHash=" + Base64.getEncoder().encodeToString(previousHash) + "]";
 	}
 

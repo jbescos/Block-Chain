@@ -28,7 +28,6 @@ public class BlockChainUtils {
 	
 	public static byte[] toBytes(Block block) throws BlockChainException {
 		StringBuilder builder = new StringBuilder();
-		builder.append(block.getIndex());
 		builder.append(block.getPreviousHash());
 		for (Transaction transaction : block.getTransactions()) {
 			builder.append(transaction.getSenderSignaure());
