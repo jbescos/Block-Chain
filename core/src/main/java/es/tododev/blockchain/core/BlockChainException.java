@@ -4,7 +4,7 @@ import java.util.Base64;
 
 import es.tododev.blockchain.core.Block.Transaction;
 
-public class BlockChainException extends Exception {
+public class BlockChainException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	private static final int FAILURE_BLOCK_NOT_FOUND = 100;

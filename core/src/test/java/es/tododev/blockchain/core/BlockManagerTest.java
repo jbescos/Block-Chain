@@ -34,9 +34,9 @@ public class BlockManagerTest {
 
 	@Test
 	public void normal() throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
-		BlockChainStorage storage = new BlockChainStorageDefault();
+		BlockChainStorage storage = new BlockChainStorageDefault(6);
 		BlockManager manager = new BlockManagerImpl(storage, validator);
-		byte[] previousHash = new byte[0];
+		byte[] previousHash = BlockChainStorageDefault.INITIAL_HASH;
 		Block b1 = createBlock(previousHash);
 		manager.add(b1);
 		Block b2 = createBlock(BlockChainUtils.toBytes(b1));
@@ -50,9 +50,9 @@ public class BlockManagerTest {
 	
 	@Test
 	public void multipleBlocks() throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
-		BlockChainStorage storage = new BlockChainStorageDefault();
+		BlockChainStorage storage = new BlockChainStorageDefault(6);
 		BlockManager manager = new BlockManagerImpl(storage, validator);
-		byte[] previousHash = new byte[0];
+		byte[] previousHash = BlockChainStorageDefault.INITIAL_HASH;
 		Block b1 = createBlock(previousHash);
 		manager.add(b1);
 		Block b2 = createBlock(BlockChainUtils.toBytes(b1));
