@@ -14,7 +14,7 @@ public class MinerTask {
 		StringBuilder builder = new StringBuilder();
 		builder.append(block.getPreviousHash());
 		for (Transaction transaction : block.getTransactions()) {
-			builder.append(transaction.getSenderSignaure());
+			builder.append(transaction.getSignaure());
 		}
 		this.base = builder.toString();
 	}

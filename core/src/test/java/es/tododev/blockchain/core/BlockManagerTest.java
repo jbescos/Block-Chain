@@ -77,11 +77,11 @@ public class BlockManagerTest {
 	}
 
 	private Transaction createTransaction() throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, BlockChainException {
-		KeyPair sender = users.get(TestUtils.random(0, users.size() - 1));
-		KeyPair receiver = users.get(TestUtils.random(0, users.size() - 1));
-		Transaction transaction = new Transaction(transactionIndex, sender.getPublic().getEncoded(), receiver.getPublic().getEncoded(), new BigDecimal("100"), "anyType");
-		byte[] senderSignaure = SignatureManager.sign(BlockChainUtils.toBytes(transaction), sender.getPrivate());
-		transaction.setSenderSignaure(senderSignaure);
+		KeyPair from = users.get(TestUtils.random(0, users.size() - 1));
+		KeyPair to = users.get(TestUtils.random(0, users.size() - 1));
+		Transaction transaction = new Transaction(transactionIndex, from.getPublic().getEncoded(), to.getPublic().getEncoded(), new BigDecimal("100"), "anyType");
+		byte[] signature = SignatureManager.sign(BlockChainUtils.toBytes(transaction), from.getPrivate());
+		transaction.setSignaure(signature);
 		transactionIndex++;
 		return transaction;
 	}

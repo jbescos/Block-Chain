@@ -30,7 +30,7 @@ public class BlockChainUtils {
 		StringBuilder builder = new StringBuilder();
 		builder.append(block.getPreviousHash());
 		for (Transaction transaction : block.getTransactions()) {
-			builder.append(transaction.getSenderSignaure());
+			builder.append(transaction.getSignaure());
 		}
 		builder.append(block.getProofOfWork());
 		try {
@@ -44,8 +44,8 @@ public class BlockChainUtils {
 	public static byte[] toBytes(Transaction transaction) throws BlockChainException {
 		StringBuilder builder = new StringBuilder();
 		builder.append(transaction.getIndex());
-		builder.append(transaction.getSenderId());
-		builder.append(transaction.getReceiverId());
+		builder.append(transaction.getFrom());
+		builder.append(transaction.getTo());
 		builder.append(transaction.getAmount());
 		builder.append(transaction.getType());
 		try {
@@ -58,7 +58,7 @@ public class BlockChainUtils {
 	
 	public static boolean isHashValid(byte[] sha256) {
 		String binary = BlockChainUtils.toBinary(sha256);
-		boolean valid = binary.startsWith("000000");
+		boolean valid = binary.startsWith("000000000");
 		return valid;
 	}
 	

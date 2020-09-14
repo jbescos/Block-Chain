@@ -40,26 +40,26 @@ public class Block implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 		private final long index;
-		private final byte[] senderId;
-		private final byte[] receiverId;
+		private final byte[] from;
+		private final byte[] to;
 		private final BigDecimal amount;
 		// It could be bitcoins, liters, KWH, etc
 		private final String type;
-		private byte[] senderSignaure;
+		private byte[] signature;
 		
-		public Transaction(long index, byte[] senderId, byte[] receiverId, BigDecimal amount, String type) {
+		public Transaction(long index, byte[] from, byte[] to, BigDecimal amount, String type) {
 			this.index = index;
-			this.senderId = senderId;
-			this.receiverId = receiverId;
+			this.from = from;
+			this.to = to;
 			this.amount = amount;
 			this.type = type;
 		}
 
-		public byte[] getSenderId() {
-			return senderId;
+		public byte[] getFrom() {
+			return from;
 		}
-		public byte[] getReceiverId() {
-			return receiverId;
+		public byte[] getTo() {
+			return to;
 		}
 		public BigDecimal getAmount() {
 			return amount;
@@ -67,14 +67,14 @@ public class Block implements Serializable {
 		public String getType() {
 			return type;
 		}
-		public byte[] getSenderSignaure() {
-			return senderSignaure;
+		public byte[] getSignaure() {
+			return signature;
 		}
 		public long getIndex() {
 			return index;
 		}
-		public void setSenderSignaure(byte[] senderSignaure) {
-			this.senderSignaure = senderSignaure;
+		public void setSignaure(byte[] signature) {
+			this.signature = signature;
 		}
 	}
 	
