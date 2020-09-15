@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface BlockChainStorage {
 	
-	boolean add(Block block) throws BlockChainException;
+	byte[] add(Block block) throws BlockChainException;
 	
 	List<Block> blockChain();
 	

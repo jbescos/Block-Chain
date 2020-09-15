@@ -26,34 +26,19 @@ public class BlockChainUtils {
 		return builder.toString();
 	}
 	
-	public static byte[] toBytes(Block block) throws BlockChainException {
+	public static byte[] sha256(Block block) throws BlockChainException {
+		StringBuilder builder = new StringBuilder(base(block));
+		builder.append(block.getProofOfWork());
+		return sha256(builder.toString().getBytes());
+	}
+	
+	public static String base(Block block) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(block.getPreviousHash());
 		for (Transaction transaction : block.getTransactions()) {
 			builder.append(transaction.getSignaure());
 		}
-		builder.append(block.getProofOfWork());
-		try {
-			MessageDigest md = MessageDigest.getInstance(ALGORITHM);
-			return md.digest(builder.toString().getBytes());
-		} catch (NoSuchAlgorithmException e) {
-			throw BlockChainException.errorCannotHash(block, e);
-		}
-	}
-
-	public static byte[] toBytes(Transaction transaction) throws BlockChainException {
-		StringBuilder builder = new StringBuilder();
-		builder.append(transaction.getIndex());
-		builder.append(transaction.getFrom());
-		builder.append(transaction.getTo());
-		builder.append(transaction.getAmount());
-		builder.append(transaction.getType());
-		try {
-			MessageDigest md = MessageDigest.getInstance(ALGORITHM);
-			return md.digest(builder.toString().getBytes());
-		} catch (NoSuchAlgorithmException e) {
-			throw BlockChainException.errorCannotHash(transaction, e);
-		}
+		return builder.toString();
 	}
 	
 	public static boolean isHashValid(byte[] sha256) {
@@ -63,15 +48,9 @@ public class BlockChainUtils {
 	}
 	
 	public static boolean test(String base, Long proofOfWork) {
-		String compose = base + proofOfWork;
-		try {
-			MessageDigest md = MessageDigest.getInstance(ALGORITHM);
-			byte[] digest = md.digest(compose.getBytes());
-			byte[] sha256 = BlockChainUtils.sha256(digest);
-			return isHashValid(sha256);
-		} catch (NoSuchAlgorithmException | BlockChainException e) {
-			return false;
-		}
+		StringBuilder builder = new StringBuilder(base).append(proofOfWork);
+		byte[] sha256 = sha256(builder.toString().getBytes());
+		return isHashValid(sha256);
 	}
 
 }

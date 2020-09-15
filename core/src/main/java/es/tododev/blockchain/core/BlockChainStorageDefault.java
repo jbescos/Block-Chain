@@ -5,20 +5,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class BlockChainStorageDefault implements BlockChainStorage {
 
 	private static final Node<Block> INITIAL = new Node<>(null, new Block(Collections.emptyList(), new byte[0]), 0L);
-	public static final byte[] INITIAL_HASH;
 	// There could be sometimes more than one block on the top
 	private List<Node<Block>> top = new LinkedList<>();
 	private final long trustedSize;
-	
-	static {
-		INITIAL_HASH = BlockChainUtils.toBytes(INITIAL.getContent());
-	}
 
 	public BlockChainStorageDefault(long trustedSize) {
 		this.trustedSize = trustedSize;
@@ -26,12 +20,17 @@ public class BlockChainStorageDefault implements BlockChainStorage {
 	}
 
 	@Override
-	public boolean add(Block block) throws BlockChainException {
+	public byte[] add(Block block) throws BlockChainException {
 		Node<Block> newForTop = null;
 		Node<Block> previous = null;
-		boolean added = false;
 		for (Node<Block> candidate : top) {
-			previous = find(b -> Arrays.equals(BlockChainUtils.toBytes(b), block.getPreviousHash()), candidate, b -> {});
+			previous = find(b -> { 
+				if (b == INITIAL.getContent()) {
+					return true;
+				} else {
+					return Arrays.equals(BlockChainUtils.sha256(b), block.getPreviousHash());
+				}
+			}, candidate);
 			if (previous != null) {
 				newForTop = new Node<>(previous, block, previous.getIndex() + 1);
 				break;
@@ -40,10 +39,10 @@ public class BlockChainStorageDefault implements BlockChainStorage {
 		if (newForTop != null) {
 			// Only need replace first, but that method doesn't exist
 			Collections.replaceAll(top, previous, newForTop);
-			added = true;
+			return BlockChainUtils.sha256(block);
 		}
 		removeForks();
-		return added;
+		return null;
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class BlockChainStorageDefault implements BlockChainStorage {
 		return blockChain;
 	}
 
-	private Node<Block> find(Predicate<Block> predicate, Node<Block> node, Consumer<Block> consumer) {
+	private Node<Block> find(Predicate<Block> predicate, Node<Block> node) {
 		Node<Block> current = node;
 		while (current != null && !predicate.test(current.getContent())) {
 			current = current.getPrevious();

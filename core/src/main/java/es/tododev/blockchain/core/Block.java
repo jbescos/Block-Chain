@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 public class Block implements Serializable {
 
@@ -39,7 +40,7 @@ public class Block implements Serializable {
 	public static class Transaction implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		private final long index;
+		private final String id = UUID.randomUUID().toString();
 		private final byte[] from;
 		private final byte[] to;
 		private final BigDecimal amount;
@@ -47,8 +48,7 @@ public class Block implements Serializable {
 		private final String type;
 		private byte[] signature;
 		
-		public Transaction(long index, byte[] from, byte[] to, BigDecimal amount, String type) {
-			this.index = index;
+		public Transaction(byte[] from, byte[] to, BigDecimal amount, String type) {
 			this.from = from;
 			this.to = to;
 			this.amount = amount;
@@ -70,11 +70,24 @@ public class Block implements Serializable {
 		public byte[] getSignaure() {
 			return signature;
 		}
-		public long getIndex() {
-			return index;
+		public String getId() {
+			return id;
 		}
 		public void setSignaure(byte[] signature) {
 			this.signature = signature;
+		}
+		public byte[] content() {
+			StringBuilder builder = new StringBuilder();
+			builder.append(id);
+			builder.append(from);
+			builder.append(to);
+			builder.append(amount);
+			builder.append(type);
+			return builder.toString().getBytes();
+		}
+		@Override
+		public String toString() {
+			return "Transaction [id=" + id + ", amount=" + amount + ", type=" + type + "]";
 		}
 	}
 	

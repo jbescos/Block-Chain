@@ -4,6 +4,7 @@ public class BlockManagerImpl implements BlockManager {
 
 	private final BlockChainStorage storage;
 	private final BlockValidator validator;
+	private byte[] previousHash = new byte[0];
 
 	public BlockManagerImpl(BlockChainStorage storage, BlockValidator validator) {
 		this.storage = storage;
@@ -11,13 +12,20 @@ public class BlockManagerImpl implements BlockManager {
 	}
 
 	@Override
-	public synchronized void add(Block block) throws BlockChainException {
+	public void add(Block block) throws BlockChainException {
 		if (validator.isValid(block)) {
-			boolean added = storage.add(block);
-			if (!added) {
+			previousHash = storage.add(block);
+			if (previousHash == null) {
 				throw BlockChainException.blockNotFound(block.getPreviousHash());
 			}
+		} else {
+			System.out.println("Block is not valid");
 		}
+	}
+
+	@Override
+	public byte[] previousHash() throws BlockChainException {
+		return previousHash;
 	}
 
 }

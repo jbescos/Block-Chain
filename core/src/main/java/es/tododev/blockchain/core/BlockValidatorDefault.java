@@ -15,7 +15,7 @@ public class BlockValidatorDefault implements BlockValidator {
 		for (Transaction transaction : block.getTransactions()) {
 			try {
 				PublicKey publicKey = SignatureManager.publicKey(transaction.getFrom());
-				boolean verified = SignatureManager.verify(BlockChainUtils.toBytes(transaction), publicKey, transaction.getSignaure());
+				boolean verified = SignatureManager.verify(transaction.content(), publicKey, transaction.getSignaure());
 				if (!verified) {
 					throw BlockChainException.transactionInvalid(transaction);
 				}
@@ -24,7 +24,7 @@ public class BlockValidatorDefault implements BlockValidator {
 				throw BlockChainException.errorSecurityTransaction(transaction, e);
 			}
 		}
-		byte[] sha256 = BlockChainUtils.sha256(BlockChainUtils.toBytes(block));
+		byte[] sha256 = BlockChainUtils.sha256(block);
 		return BlockChainUtils.isHashValid(sha256);
 	}
 
