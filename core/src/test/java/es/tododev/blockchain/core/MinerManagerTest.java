@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import es.tododev.blockchain.core.Block.Transaction;
 
-public class BlockManagerTest {
+public class MinerManagerTest {
 
 	private static final BlockValidator validator = new BlockValidatorDefault();
 	private static final int USERS = 10;
@@ -26,7 +26,7 @@ public class BlockManagerTest {
 	@Test
 	public void normal() throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
 		BlockChainStorage storage = new BlockChainStorageDefault(6);
-		BlockManager manager = new BlockManagerImpl(storage, validator);
+		MinerManager manager = new MinerManagerImpl(null, storage, validator, new ProofOfWorkImpl());
 		Block b1 = TestUtils.createBlock(manager.previousHash(), TestUtils.createTransactions(users, TRANSACTIONS));
 		manager.add(b1);
 		Block b2 = TestUtils.createBlock(manager.previousHash(), TestUtils.createTransactions(users, TRANSACTIONS));
@@ -41,7 +41,7 @@ public class BlockManagerTest {
 	@Test
 	public void multipleBlocks() throws BlockChainException, InvalidKeyException, NoSuchAlgorithmException, SignatureException {
 		BlockChainStorage storage = new BlockChainStorageDefault(6);
-		BlockManager manager = new BlockManagerImpl(storage, validator);
+		MinerManager manager = new MinerManagerImpl(null, storage, validator, new ProofOfWorkImpl());
 		byte[] previousHash = new byte[0];
 		Block b1 = TestUtils.createBlock(previousHash, TestUtils.createTransactions(users, TRANSACTIONS));
 		manager.add(b1);
@@ -76,11 +76,12 @@ public class BlockManagerTest {
 	
 	@Test
 	public void block() {
+		BlockChainStorage storage = new BlockChainStorageDefault(6);
 		Block initial = TestUtils.createBlock(new byte[0], Arrays.asList(TestUtils.createTransaction(users)));
 		Block next = TestUtils.createBlock(BlockChainUtils.sha256(initial), Arrays.asList(TestUtils.createTransaction(users)));
-		long proofOfWork = new MinerTask(next).calculateProofOfWork();
+		long proofOfWork = new ProofOfWorkImpl().calculate(next);
 		next.setProofOfWork(proofOfWork);
-		assertTrue(new BlockValidatorDefault().isValid(next));
+		new BlockValidatorDefault().validate(storage, next);
 	}
 	
 

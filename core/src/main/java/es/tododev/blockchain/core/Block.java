@@ -37,18 +37,24 @@ public class Block implements Serializable {
 				+ ", previousHash=" + Base64.getEncoder().encodeToString(previousHash) + "]";
 	}
 
-	public static class Transaction implements Serializable {
+	public static class Transaction implements Serializable, Cloneable {
 
 		private static final long serialVersionUID = 1L;
-		private final String id = UUID.randomUUID().toString();
+		private final String id;
 		private final byte[] from;
 		private final byte[] to;
 		private final BigDecimal amount;
 		// It could be bitcoins, liters, KWH, etc
 		private final String type;
 		private byte[] signature;
+		private Transaction minerFee;
 		
 		public Transaction(byte[] from, byte[] to, BigDecimal amount, String type) {
+			this(UUID.randomUUID().toString(), from, to, amount, type);
+		}
+		
+		public Transaction(String id, byte[] from, byte[] to, BigDecimal amount, String type) {
+			this.id = id;
 			this.from = from;
 			this.to = to;
 			this.amount = amount;
@@ -76,6 +82,19 @@ public class Block implements Serializable {
 		public void setSignaure(byte[] signature) {
 			this.signature = signature;
 		}
+		public Transaction getMinerFee() {
+			return minerFee;
+		}
+		public void setMinerFee(Transaction minerFee) {
+			this.minerFee = minerFee;
+		}
+		@Override
+		protected Transaction clone() {
+			Transaction clone = new Transaction(id, from, to, amount, type);
+			clone.setSignaure(signature);
+			return clone;
+		}
+
 		public byte[] content() {
 			StringBuilder builder = new StringBuilder();
 			builder.append(id);

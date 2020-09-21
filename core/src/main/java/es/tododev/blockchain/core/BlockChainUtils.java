@@ -3,10 +3,14 @@ package es.tododev.blockchain.core;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import es.tododev.blockchain.core.Block.Transaction;
 
 public class BlockChainUtils {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BlockChainUtils.class);
 	private static final String ALGORITHM = "SHA-256";
 	
 	public static byte[] sha256(byte[] serialized) throws BlockChainException {
@@ -43,7 +47,7 @@ public class BlockChainUtils {
 	
 	public static boolean isHashValid(byte[] sha256) {
 		String binary = BlockChainUtils.toBinary(sha256);
-		boolean valid = binary.startsWith("000000000");
+		boolean valid = binary.startsWith("0000000000000000000");
 		return valid;
 	}
 	

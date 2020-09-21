@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import es.tododev.blockchain.core.Block.Transaction;
+
 public class BlockChainStorageDefault implements BlockChainStorage {
 
 	private static final Node<Block> INITIAL = new Node<>(null, new Block(Collections.emptyList(), new byte[0]), 0L);
@@ -83,6 +85,24 @@ public class BlockChainStorageDefault implements BlockChainStorage {
 			}
 			top = updated;
 		}
+	}
+
+	@Override
+	public boolean exists(Transaction transaction) {
+		for (Node<Block> candidate : top) {
+			Node<Block> exists = find(b -> {
+				for (Transaction tx : b.getTransactions()) {
+					if (tx.getId().equals(transaction.getId())) {
+						return true;
+					}
+				}
+				return false;
+			}, candidate);
+			if (exists != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

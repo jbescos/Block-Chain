@@ -62,7 +62,7 @@ public class TestUtils {
 	
 	public static Block createBlock(byte[] previousHash, List<Transaction> transactions) {
 		Block block = new Block(transactions, previousHash);
-		long proofOfWork = new MinerTask(block).calculateProofOfWork();
+		long proofOfWork = new ProofOfWorkImpl().calculate(block);
 		block.setProofOfWork(proofOfWork);
 		return block;
 	}

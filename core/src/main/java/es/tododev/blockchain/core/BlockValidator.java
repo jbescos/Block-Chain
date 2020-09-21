@@ -2,6 +2,6 @@ package es.tododev.blockchain.core;
 
 public interface BlockValidator {
 
-	boolean isValid(Block block) throws BlockChainException;
+	void validate(BlockChainStorage blockChainStorage, Block block) throws BlockChainException;
 	
 }
